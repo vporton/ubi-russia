@@ -1,0 +1,12 @@
+{
+  "name": "ubi-russia",
+  "version": "0.0.1",
+  "description": "UBI in Russia using ESIA and Ethereum",
+  "main": "index.js",
+  "repository": "git@github.com:vporton/ubi-russia.git",
+  "author": "Victor Porton",
+  "license": "GPLv3",
+  "dependencies": {
+    "@nomiclabs/buidler": "^1.4.4"
+  }
+}
