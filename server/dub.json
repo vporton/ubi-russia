@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"Victor Porton"
+	],
+	"copyright": "Copyright © 2020, Victor Porton",
+	"description": "UBI in Russia oracle server",
+	"license": "GPLv3",
+	"name": "ubi-russia-server"
+}
