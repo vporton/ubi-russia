@@ -3,6 +3,10 @@
 		"Victor Porton"
 	],
 	"copyright": "Copyright © 2020, Victor Porton",
+	"dependencies": {
+		"hunt": "~>1.6.2",
+		"hunt-entity": "~>2.6.8"
+	},
 	"description": "UBI in Russia oracle server",
 	"license": "GPLv3",
 	"name": "ubi-russia-server"
