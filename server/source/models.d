@@ -13,7 +13,7 @@ class Person : Model
 
     uint esiaID;
     bool alive = true;
-    // DateTime birthDate;
+    DateTime birthDate;
 
-    // ETHAddress ethAddress; // can be changed by the user
+    ETHAddress ethAddress; // can be changed by the user
 }
