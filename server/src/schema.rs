@@ -1,9 +1,9 @@
 table! {
-    person (id) {
-        id -> Int4,
+    persons (id) {
+        id -> Int8,
         esiaid -> Int8,
-        alive -> Nullable<Bool>,
-        birthdate -> Date,
+        alive -> Bool,
+        birthdate -> Timestamp,
         ethaddress -> Nullable<Bpchar>,
     }
 }

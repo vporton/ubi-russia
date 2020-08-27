@@ -2,5 +2,7 @@
 *.iml
 
 Cargo.lock
+server/target/
+.env
 
 node_modules

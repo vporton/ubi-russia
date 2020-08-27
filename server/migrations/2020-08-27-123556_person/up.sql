@@ -1,11 +1,11 @@
-CREATE TABLE person (
-  id SERIAL PRIMARY KEY,
+CREATE TABLE persons (
+  id BIGSERIAL PRIMARY KEY,
   esiaID BIGINT NOT NULL,
-  alive BOOLEAN NULL,
-  birthDate DATE NOT NULL,
-  ethAddress CHAR(42) NULL
+  alive BOOLEAN NOT NULL DEFAULT TRUE,
+  birthDate TIMESTAMP NOT NULL,
+  ethAddress CHAR(40) NULL
 );
 
-CREATE INDEX esiaID_index ON person(esiaID);
-CREATE INDEX alive_index ON person(alive);
-CREATE INDEX ethAddress_index ON person(ethAddress);
+CREATE INDEX esiaID_index ON persons(esiaID);
+CREATE INDEX alive_index ON persons(alive);
+CREATE INDEX ethAddress_index ON persons(ethAddress);
