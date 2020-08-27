@@ -16,6 +16,7 @@ contract BaseUBI {
     mapping (address => mapping (address => uint256)) public allowed;
     mapping (address => int256) public lastBalances;
     mapping (address => uint256) public lastTimes;
+    mapping (uint => address) public addresses; // ESIA ID -> address
 
     constructor(address _owner, address _gasHolder, uint8 _decimals, string memory _name, string memory _symbol) {
         owner = _owner;
@@ -36,9 +37,18 @@ contract BaseUBI {
         owner = address(0);
     }
 
-    function setAccount(address _user, uint256 _startTime) external {
+    function setAccount(address _user, uint256 _startTime, uint _esiaID) external {
         require(msg.sender == gasHolder, "System function");
-        if(lastTimes[_user] != 0) ++numberOfUsers;
+        if(addresses[_esiaID] == 0) {
+            ++numberOfUsers;
+        } else {
+            address _oldUser = addresses[_esiaID];
+            lastBalances[_user] = lastBalances[_oldUser];
+            lastTimes[_user] = lastTimes[_oldUser];
+            lastBalances[_oldUser] = 0;
+            lastTimes[_oldUser] = 0;
+            addresses[_esiaID] = _user;
+        }
         lastTimes[_user] = _startTime;
         lastBalances[_user] = 0;
     }
