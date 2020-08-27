@@ -1,0 +1,6 @@
+{% extends "base" %}
+{% block title %}Домашняя страница{% endblock title %}
+{% block header %}Домашняя страница{% endblock header %}
+{% block body %}
+<p>Test</p>
+{% endblock body %}

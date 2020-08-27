@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock title %} - Бесплатная криптовалюта для вас</title>
+</head>
+<body>
+
+<h1>{% block header %}{% endblock header %}</h1>
+
+{% block body %}{% endblock body %}
+
+</body>
+</html>
