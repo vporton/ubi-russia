@@ -79,6 +79,8 @@ contract BaseUBI {
 
     // may be negative
     function _balanceOf(address _holder) private view returns (int256 balance) {
+        if(lastTimes[_holder] == 0) // no such user
+            return 0;
         int256 passedTime = int256(now) - int256(lastTimes[_holder]);
         return int256(lastBalances[_holder]) + passedTime * int256(10**digits / (24*3600));
     }

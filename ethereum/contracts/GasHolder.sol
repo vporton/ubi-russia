@@ -20,9 +20,9 @@ contract GasHolder is BaseToken {
 
     function withdraw(uint256 _amount) external {
         require(_amount >= balances[msg.sender], "Not enough balance");
-        msg.sender.transfer(_amount);
         balances[msg.sender] -= _amount;
         totalSupply -= _amount;
+        msg.sender.transfer(_amount);
         emit Transfer(msg.sender, address(0), _amount);
     }
 
