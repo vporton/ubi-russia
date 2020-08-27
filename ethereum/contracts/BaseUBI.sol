@@ -35,8 +35,8 @@ contract BaseUBI {
 
     function transfer(address _to, uint256 _value) external returns (bool success) {
         require(msg.sender == owner || _balanceOf(msg.sender) >= int256(_value), "Not enough funds");
-        uint256 passedTime = now - lastTotalCheck;
-        uint256 _difference = passedTime * 10**digits / (24*3600);
+        uint256 _passedTime = now - lastTotalCheck;
+        uint256 _difference = _passedTime * 10**digits / (24*3600);
         lastBalances[msg.sender] = _balanceOf(msg.sender) - int256(_value);
         lastTimes[msg.sender] = now;
         lastBalances[_to] = _balanceOf(msg.sender) + int256(_value);
@@ -49,8 +49,8 @@ contract BaseUBI {
 
     function transferFrom(address _from, address _to, uint256 _value) external returns (bool success) {
         require(msg.sender == owner || _balanceOf(_from) >= int256(_value) && allowed[_from][msg.sender] >= _value, "Not enough funds");
-        uint256 passedTime = now - lastTotalCheck;
-        uint256 _difference = passedTime * 10**digits / (24*3600);
+        uint256 _passedTime = now - lastTotalCheck;
+        uint256 _difference = _passedTime * 10**digits / (24*3600);
         lastBalances[_to] = _balanceOf(msg.sender) + int256(_value);
         lastTimes[_to] = now;
         lastBalances[_from] = _balanceOf(msg.sender) - int256(_value);
@@ -81,14 +81,14 @@ contract BaseUBI {
     function _balanceOf(address _holder) private view returns (int256 balance) {
         if(lastTimes[_holder] == 0) // no such user
             return 0;
-        int256 passedTime = int256(now) - int256(lastTimes[_holder]);
-        return int256(lastBalances[_holder]) + passedTime * int256(10**digits / (24*3600));
+        int256 _passedTime = int256(now) - int256(lastTimes[_holder]);
+        return int256(lastBalances[_holder]) + _passedTime * int256(10**digits / (24*3600));
     }
 
     // may be negative
     function _totalSupply() private view returns (int256) {
-        int256 passedTime = int256(now) - int256(lastTotalCheck);
-        return int256(lastTotalSupply) + passedTime * int256(numberOfUsers * 10**digits / (24*3600));
+        int256 _passedTime = int256(now) - int256(lastTotalCheck);
+        return int256(lastTotalSupply) + _passedTime * int256(numberOfUsers * 10**digits / (24*3600));
     }
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
