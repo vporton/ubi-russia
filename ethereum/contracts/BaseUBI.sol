@@ -43,11 +43,13 @@ contract BaseUBI {
             ++numberOfUsers;
         } else {
             address _oldUser = addresses[_esiaID];
-            lastBalances[_user] = lastBalances[_oldUser];
-            lastTimes[_user] = lastTimes[_oldUser];
-            lastBalances[_oldUser] = 0;
-            lastTimes[_oldUser] = 0;
-            addresses[_esiaID] = _user;
+            if(_user != _oldUser) {
+                lastBalances[_user] = lastBalances[_oldUser];
+                lastTimes[_user] = lastTimes[_oldUser];
+                lastBalances[_oldUser] = 0;
+                lastTimes[_oldUser] = 0;
+                addresses[_esiaID] = _user;
+            }
         }
         lastTimes[_user] = _startTime;
         lastBalances[_user] = 0;
