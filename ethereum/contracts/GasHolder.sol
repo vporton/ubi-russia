@@ -34,6 +34,6 @@ contract GasHolder is BaseToken {
 
     function setAccount(BaseUBI _ubi, address _user, uint256 _startTime) external {
         require(msg.sender == server, "System function");
-        _ubi.setAccount{gas: balances[msg.sender]}(_user, _startTime);
+        _ubi.setAccount{gas: balances[msg.sender]}(_user, _startTime); // FIXME: Who pays gas?!
     }
 }
