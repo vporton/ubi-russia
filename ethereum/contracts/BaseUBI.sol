@@ -1,11 +1,13 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity ^0.6.8;
+pragma solidity ^0.7.0;
 
 // import "@nomiclabs/buidler/console.sol";
 import './BaseToken.sol';
 
 contract BaseUBI {
-    uint public digits;
+    uint8 public decimals;
+    string public name;
+    string public symbol;
     address public owner;
     address public gasHolder;
     uint256 public lastTotalSupply;
@@ -15,10 +17,12 @@ contract BaseUBI {
     mapping (address => int256) public lastBalances;
     mapping (address => uint256) public lastTimes;
 
-    constructor(address _owner, address _gasHolder, uint _digits) public {
+    constructor(address _owner, address _gasHolder, uint8 _decimals, string memory _name, string memory _symbol) {
         owner = _owner;
         gasHolder = _gasHolder;
-        digits = _digits;
+        decimals = _decimals;
+        name = _name;
+        symbol = _symbol;
     }
 
     function setOwner(address _owner) external {
@@ -46,29 +50,29 @@ contract BaseUBI {
 
     function transfer(address _to, uint256 _value) external returns (bool success) {
         require(msg.sender == owner || _balanceOf(msg.sender) >= int256(_value), "Not enough funds");
-        uint256 _passedTime = now - lastTotalCheck;
-        uint256 _difference = _passedTime * 10**digits / (24*3600);
+        uint256 _passedTime = block.timestamp - lastTotalCheck;
+        uint256 _difference = _passedTime * 10**decimals / (24*3600);
         lastBalances[msg.sender] = _balanceOf(msg.sender) - int256(_value);
-        lastTimes[msg.sender] = now;
+        lastTimes[msg.sender] = block.timestamp;
         lastBalances[_to] = _balanceOf(msg.sender) + int256(_value);
-        lastTimes[_to] = now;
+        lastTimes[_to] = block.timestamp;
         lastTotalSupply += _difference;
-        lastTotalCheck = now;
+        lastTotalCheck = block.timestamp;
         emit Transfer(msg.sender, _to, _value);
         return true;
     }
 
     function transferFrom(address _from, address _to, uint256 _value) external returns (bool success) {
         require(msg.sender == owner || _balanceOf(_from) >= int256(_value) && allowed[_from][msg.sender] >= _value, "Not enough funds");
-        uint256 _passedTime = now - lastTotalCheck;
-        uint256 _difference = _passedTime * 10**digits / (24*3600);
+        uint256 _passedTime = block.timestamp - lastTotalCheck;
+        uint256 _difference = _passedTime * 10**decimals / (24*3600);
         lastBalances[_to] = _balanceOf(msg.sender) + int256(_value);
-        lastTimes[_to] = now;
+        lastTimes[_to] = block.timestamp;
         lastBalances[_from] = _balanceOf(msg.sender) - int256(_value);
-        lastTimes[_from] = now;
+        lastTimes[_from] = block.timestamp;
         allowed[_from][msg.sender] -= _value;
         lastTotalSupply += _difference;
-        lastTotalCheck = now;
+        lastTotalCheck = block.timestamp;
         emit Transfer(_from, _to, _value);
         return true;
     }
@@ -92,14 +96,14 @@ contract BaseUBI {
     function _balanceOf(address _holder) private view returns (int256 balance) {
         if(lastTimes[_holder] == 0) // no such user
             return 0;
-        int256 _passedTime = int256(now) - int256(lastTimes[_holder]);
-        return int256(lastBalances[_holder]) + _passedTime * int256(10**digits / (24*3600));
+        int256 _passedTime = int256(block.timestamp) - int256(lastTimes[_holder]);
+        return int256(lastBalances[_holder]) + _passedTime * int256(10**decimals / (24*3600));
     }
 
     // may be negative
     function _totalSupply() private view returns (int256) {
-        int256 _passedTime = int256(now) - int256(lastTotalCheck);
-        return int256(lastTotalSupply) + _passedTime * int256(numberOfUsers * 10**digits / (24*3600));
+        int256 _passedTime = int256(block.timestamp) - int256(lastTotalCheck);
+        return int256(lastTotalSupply) + _passedTime * int256(numberOfUsers * 10**decimals / (24*3600));
     }
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);

@@ -1,15 +1,21 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity ^0.6.8;
+pragma solidity ^0.7.0;
 
 // import "@nomiclabs/buidler/console.sol";
 import './BaseToken.sol';
 import './BaseUBI.sol';
 
 contract GasHolder is BaseToken {
+    uint8 public decimals;
+    string public name;
+    string public symbol;
     address payable public server;
 
-    constructor(address payable _server) public {
+    constructor(address payable _server, uint8 _decimals, string memory _name, string memory _symbol) {
         server = _server;
+        decimals = _decimals;
+        name = _name;
+        symbol = _symbol;
     }
 
     function setServer(address payable _server) external {
