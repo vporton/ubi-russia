@@ -19,4 +19,20 @@ module.exports = {
   solc: {
     version: "0.7.0",
   },
+  networks: {
+    rinkeby: {
+      url: "https://rinkeby.infura.io/v3/1d0c278301fc40f3a8f40f25ae3bd328",
+      accounts: process.env.RINKEBY_PRIVATE_KEY ? [process.env.RINKEBY_PRIVATE_KEY] : [],
+    },
+    mainnet: {
+      url: "https://mainnet.infura.io/v3/1d0c278301fc40f3a8f40f25ae3bd328",
+      accounts: process.env.MAINNET_PRIVATE_KEY ? [process.env.MAINNET_PRIVATE_KEY] : [],
+    },
+  },
+  namedAccounts: {
+    deployer: {
+        default: 0, // here this will by default take the first account as deployer
+        //4: '0xffffeffffff', // but for rinkeby it will be a specific address
+    },
+  },
 };
