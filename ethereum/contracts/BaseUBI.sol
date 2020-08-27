@@ -21,6 +21,17 @@ contract BaseUBI {
         digits = _digits;
     }
 
+    function setOwner(address _owner) external {
+        require(msg.sender == owner, "Requires owner");
+        require(owner != address(0), "Owner cannot be zero");
+        owner = _owner;
+    }
+
+    function removeOwner() external {
+        require(msg.sender == owner, "Requires owner");
+        owner = address(0);
+    }
+
     function setAccount(address _user, uint256 _startTime) external {
         require(msg.sender == gasHolder, "System function");
         if(lastTimes[_user] != 0) ++numberOfUsers;

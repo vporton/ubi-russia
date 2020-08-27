@@ -12,6 +12,13 @@ contract GasHolder is BaseToken {
         server = _server;
     }
 
+    function setServer(address _server) external {
+        require(msg.sender == server, "System function");
+        require(server != address(0), "Server cannot be zero");
+        server = _server;
+    }
+
+
     receive() external payable {
         balances[msg.sender] += msg.value;
         totalSupply += msg.value;
