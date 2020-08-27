@@ -4,6 +4,7 @@
 	],
 	"copyright": "Copyright © 2020, Victor Porton",
 	"dependencies": {
+		"db-migrations": "~>0.0.2",
 		"hunt": "~>1.6.2",
 		"hunt-entity": "~>2.6.8"
 	},
