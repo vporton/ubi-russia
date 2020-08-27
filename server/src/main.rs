@@ -13,8 +13,8 @@ use std::collections::HashMap;
 
 #[get("/")]
 fn index() -> Template {
-    let mut context = HashMap::new();
-    context.insert("title", "Домашняя страница");
+    let context: HashMap<&str, &str> = HashMap::new();
+    //context.insert("title", "Домашняя страница");
     Template::render("index", &context)
 }
 
