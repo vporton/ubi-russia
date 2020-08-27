@@ -6,3 +6,5 @@ server/target/
 .env
 
 node_modules
+artifacts/
+cache/
