@@ -18,7 +18,6 @@ contract GasHolder is BaseToken {
         server = _server;
     }
 
-
     receive() external payable {
         balances[msg.sender] += msg.value;
         totalSupply += msg.value;
