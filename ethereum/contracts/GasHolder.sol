@@ -31,7 +31,9 @@ contract GasHolder is BaseToken {
     }
 
     function setAccount(BaseUBI _ubi, address _user, uint256 _startTime, uint _esiaID) external {
-        server.transfer((gasleft() + TODO) * tx.gasprice); // refund gas to the server
+        uint256 _refund = (gasleft() + TODO) * tx.gasprice;
+        require(_refund <= balances[_user], "Not enough balance");
+        server.transfer(_refund); // refund gas to the server
         require(msg.sender == server, "System function");
         _ubi.setAccount{gas: balances[_user]}(_user, _startTime, _esiaID);
     }
