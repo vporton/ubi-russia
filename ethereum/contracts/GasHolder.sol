@@ -37,5 +37,6 @@ contract GasHolder is BaseToken {
         balances[_user] -= _refund; // must be called before transfer() against reentrancy attack
         server.transfer(_refund); // refund gas to the server
         _ubi.setAccount{gas: balances[_user]}(_user, _startTime, _esiaID);
+        // We may be in a wrong state now, don't change any variables here.
     }
 }
