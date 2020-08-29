@@ -39,6 +39,7 @@ contract BaseUBI {
 
     function setAccount(address _user, uint256 _startTime, uint _esiaID) external {
         require(msg.sender == gasHolder, "System function");
+        // FIXME: if _startTime == 0, --numberOfUsers and (?) correct totals, etc.
         if(addresses[_esiaID] == 0) {
             ++numberOfUsers;
         } else {
