@@ -3,3 +3,5 @@
 * Refunding the gas to the server.
 
 * Allow user to donate registration fee to the server?
+
+* Should not set the balance to zero on death?
