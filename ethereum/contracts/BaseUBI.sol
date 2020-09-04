@@ -13,6 +13,7 @@ contract BaseUBI {
     int256 public lastTotalSupply;
     uint256 public lastTotalCheck;
     uint numberOfActiveUsers;
+    bool enabledMinting = true;
     mapping (address => mapping (address => uint256)) public allowed;
     mapping (address => int256) public lastBalances;
     mapping (address => uint256) public lastTimes;
@@ -36,6 +37,11 @@ contract BaseUBI {
     function removeOwner() external {
         require(msg.sender == owner, "Requires owner");
         owner = address(0);
+    }
+
+    function disableMinting() external {
+        require(msg.sender == owner, "Only the admin");
+        enabledMinting = false;
     }
 
     function setAccount(address _user, uint256 _startTime, uint _esiaID, bool _setToZero) external {
@@ -101,7 +107,7 @@ contract BaseUBI {
     }
 
     function transfer(address _to, uint256 _value) external returns (bool success) {
-        require(msg.sender == owner || _balanceOf(msg.sender) >= int256(_value), "Not enough funds");
+        require(enabledMinting && msg.sender == owner || _balanceOf(msg.sender) >= int256(_value), "Not enough funds");
         int256 _passedTime = int256(block.timestamp) - int256(lastTotalCheck);
         int256 _difference = _passedTime * int256(10**decimals / (24*3600));
         lastBalances[msg.sender] = _balanceOf(msg.sender) - int256(_value);
@@ -115,7 +121,7 @@ contract BaseUBI {
     }
 
     function transferFrom(address _from, address _to, uint256 _value) external returns (bool success) {
-        require(msg.sender == owner || _balanceOf(_from) >= int256(_value) && allowed[_from][msg.sender] >= _value, "Not enough funds");
+        require((enabledMinting && msg.sender == owner || _balanceOf(_from) >= int256(_value)) && allowed[_from][msg.sender] >= _value, "Not enough funds");
         int256 _passedTime = int256(block.timestamp) - int256(lastTotalCheck);
         int256 _difference = _passedTime * int256(10**decimals / (24*3600));
         lastBalances[_to] = _balanceOf(msg.sender) + int256(_value);
