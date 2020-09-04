@@ -71,8 +71,8 @@ contract BaseUBI {
 
     function transfer(address _to, uint256 _value) external returns (bool success) {
         require(msg.sender == owner || _balanceOf(msg.sender) >= int256(_value), "Not enough funds");
-        uint256 _passedTime = block.timestamp - lastTotalCheck;
-        uint256 _difference = _passedTime * 10**decimals / (24*3600);
+        int256 _passedTime = int256(block.timestamp) - int256(lastTotalCheck);
+        int256 _difference = _passedTime * int256(10**decimals / (24*3600));
         lastBalances[msg.sender] = _balanceOf(msg.sender) - int256(_value);
         lastTimes[msg.sender] = block.timestamp;
         lastBalances[_to] = _balanceOf(msg.sender) + int256(_value);
@@ -85,8 +85,8 @@ contract BaseUBI {
 
     function transferFrom(address _from, address _to, uint256 _value) external returns (bool success) {
         require(msg.sender == owner || _balanceOf(_from) >= int256(_value) && allowed[_from][msg.sender] >= _value, "Not enough funds");
-        uint256 _passedTime = block.timestamp - lastTotalCheck;
-        uint256 _difference = _passedTime * 10**decimals / (24*3600);
+        int256 _passedTime = int256(block.timestamp) - int256(lastTotalCheck);
+        int256 _difference = _passedTime * int256(10**decimals / (24*3600));
         lastBalances[_to] = _balanceOf(msg.sender) + int256(_value);
         lastTimes[_to] = block.timestamp;
         lastBalances[_from] = _balanceOf(msg.sender) - int256(_value);
