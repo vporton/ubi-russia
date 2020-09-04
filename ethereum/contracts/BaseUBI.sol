@@ -12,11 +12,12 @@ contract BaseUBI {
     address public gasHolder;
     int256 public lastTotalSupply;
     uint256 public lastTotalCheck;
-    uint numberOfUsers;
+    uint numberOfActiveUsers;
     mapping (address => mapping (address => uint256)) public allowed;
     mapping (address => int256) public lastBalances;
     mapping (address => uint256) public lastTimes;
     mapping (uint => address) public addresses; // ESIA ID -> address
+    mapping (address => uint) public esiaIDs;   // address -> ESIA ID
 
     constructor(address _owner, address _gasHolder, uint8 _decimals, string memory _name, string memory _symbol) {
         owner = _owner;
@@ -37,18 +38,30 @@ contract BaseUBI {
         owner = address(0);
     }
 
-    function setAccount(address _user, uint256 _startTime, uint _esiaID) external {
+    function setAccount(address _user, uint256 _startTime, uint _esiaID, bool _setToZero) external {
         require(msg.sender == gasHolder, "System function");
+        require(esiaIDs[_user] == 0 || esiaIDs[_user] == _esiaID, "Account busy by other user");
         if(addresses[_esiaID] == address(0)) {
             // Creating new user:
             int256 _userTime = int256(lastTotalCheck) - int256(_startTime);
-            lastTotalSupply += _userTime * int256(10**decimals / (24*3600));
-            ++numberOfUsers;
+            int256 _balance = _userTime * int256(10**decimals / (24*3600));
+            lastTotalSupply += _balance;
+            ++numberOfActiveUsers;
+            addresses[_esiaID] = _user;
+            esiaIDs[_user] = _esiaID;
+            lastBalances[_user] = _balance;
+            lastTimes[_user] = lastTotalCheck;
         } else if(_startTime == 0) {
-            // Removing a user:
+            // Removing a user, for example if he is dead.
             int256 _userTime = int256(lastTotalCheck) - int256(_startTime);
-            lastTotalSupply -= _userTime * int256(10**decimals / (24*3600));
-            --numberOfUsers;
+            --numberOfActiveUsers;
+            if(_setToZero) {
+                lastTotalSupply -= _userTime * int256(10**decimals / (24*3600));
+                lastBalances[_user] = 0;
+                lastTimes[_user] = 0;
+            }
+            addresses[_esiaID] = address(0);
+            esiaIDs[_user] = 0;
         } else {
             // Moving user to new account:
             address _oldUser = addresses[_esiaID];
@@ -58,10 +71,28 @@ contract BaseUBI {
                 lastBalances[_oldUser] = 0;
                 lastTimes[_oldUser] = 0;
                 addresses[_esiaID] = _user;
+                esiaIDs[_user] = _esiaID;
             }
         }
         lastTimes[_user] = _startTime;
         lastBalances[_user] = 0;
+    }
+
+    function transferUBI(address _newAddress) external {
+        require(_newAddress != msg.sender, "Cannot transfer to yourself");
+        require(esiaIDs[msg.sender] != 0); // needed?
+        uint _esiaID = esiaIDs[_newAddress];
+        require(_esiaID == 0, "Account busy by a user");
+
+        addresses[_esiaID] = _newAddress;
+        esiaIDs[msg.sender] = 0;
+        esiaIDs[_newAddress] = _esiaID;
+
+        lastBalances[_newAddress] = lastBalances[msg.sender];
+        lastTimes[_newAddress] = lastTimes[msg.sender];
+        lastBalances[msg.sender] = 0;
+        lastTimes[msg.sender] = 0;
+
     }
 
     function balanceOf(address _user) external view returns (uint256 balance) {
@@ -114,17 +145,18 @@ contract BaseUBI {
     }
 
     // may be negative
-    function _balanceOf(address _holder) private view returns (int256 balance) {
-        if(lastTimes[_holder] == 0) // no such user
-            return 0;
-        int256 _passedTime = int256(block.timestamp) - int256(lastTimes[_holder]);
-        return int256(lastBalances[_holder]) + _passedTime * int256(10**decimals / (24*3600));
+    function _balanceOf(address _holder) private view returns (int256 _balance) {
+        _balance = lastBalances[_holder];
+        if(esiaIDs[_holder] != 0) {
+            int256 _passedTime = int256(block.timestamp) - int256(lastTimes[_holder]);
+            _balance += _passedTime * int256(10**decimals / (24*3600));
+        }
     }
 
     // may be negative
     function _totalSupply() private view returns (int256) {
         int256 _passedTime = int256(block.timestamp) - int256(lastTotalCheck);
-        return lastTotalSupply + _passedTime * int256(numberOfUsers * 10**decimals / (24*3600));
+        return lastTotalSupply + _passedTime * int256(numberOfActiveUsers * 10**decimals / (24*3600));
     }
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
