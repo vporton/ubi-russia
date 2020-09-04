@@ -10,7 +10,7 @@ contract BaseUBI {
     string public symbol;
     address public owner;
     address public gasHolder;
-    uint256 public lastTotalSupply;
+    int256 public lastTotalSupply;
     uint256 public lastTotalCheck;
     uint numberOfUsers;
     mapping (address => mapping (address => uint256)) public allowed;
@@ -39,10 +39,18 @@ contract BaseUBI {
 
     function setAccount(address _user, uint256 _startTime, uint _esiaID) external {
         require(msg.sender == gasHolder, "System function");
-        // FIXME: if _startTime == 0, --numberOfUsers and (?) correct totals, etc.
         if(addresses[_esiaID] == address(0)) {
+            // Creating new user:
+            int256 _userTime = int256(lastTotalCheck) - int256(_startTime);
+            lastTotalSupply += _userTime * int256(10**decimals / (24*3600));
             ++numberOfUsers;
+        } else if(_startTime == 0) {
+            // Removing a user:
+            int256 _userTime = int256(lastTotalCheck) - int256(_startTime);
+            lastTotalSupply -= _userTime * int256(10**decimals / (24*3600));
+            --numberOfUsers;
         } else {
+            // Moving user to new account:
             address _oldUser = addresses[_esiaID];
             if(_user != _oldUser) {
                 lastBalances[_user] = lastBalances[_oldUser];
@@ -116,7 +124,7 @@ contract BaseUBI {
     // may be negative
     function _totalSupply() private view returns (int256) {
         int256 _passedTime = int256(block.timestamp) - int256(lastTotalCheck);
-        return int256(lastTotalSupply) + _passedTime * int256(numberOfUsers * 10**decimals / (24*3600));
+        return lastTotalSupply + _passedTime * int256(numberOfUsers * 10**decimals / (24*3600));
     }
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
