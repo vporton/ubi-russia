@@ -9,7 +9,7 @@ contract GasHolder {
     uint8 public decimals;
     address payable public server;
 
-    constructor(address payable _server, uint8 _decimals, string memory _name, string memory _symbol) {
+    constructor(address payable _server, uint8 _decimals) {
         server = _server;
         decimals = _decimals;
     }
