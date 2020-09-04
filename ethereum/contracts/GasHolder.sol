@@ -5,17 +5,13 @@ pragma solidity ^0.7.0;
 import './BaseToken.sol';
 import './BaseUBI.sol';
 
-contract GasHolder is BaseToken {
+contract GasHolder {
     uint8 public decimals;
-    string public name;
-    string public symbol;
     address payable public server;
 
     constructor(address payable _server, uint8 _decimals, string memory _name, string memory _symbol) {
         server = _server;
         decimals = _decimals;
-        name = _name;
-        symbol = _symbol;
     }
 
     function setServer(address payable _server) external {
@@ -46,4 +42,9 @@ contract GasHolder is BaseToken {
         totalSupply -= _amount;
         emit Transfer(msg.sender, address(0), _amount);
     }
+
+    uint256 totalSupply;
+    mapping (address => uint256) public balances;
+
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
 }
