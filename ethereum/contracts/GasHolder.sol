@@ -42,4 +42,11 @@ contract GasHolder is BaseToken {
         _ubi.setAccount{gas: balances[_user]}(_user, _startTime, _esiaID);
         // We may be in a wrong state now, don't change any variables here.
     }
+
+    function donateToUs(uint256 _amount) external {
+        require(balances[msg.sender] >= _amount, "Not enough funds");
+        balances[msg.sender] -= _amount;
+        totalSupply -= _amount;
+        emit Transfer(msg.sender, address(0), _amount);
+    }
 }
