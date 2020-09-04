@@ -34,9 +34,6 @@ contract GasHolder is BaseToken {
         uint256 _refund = (gasleft() + TODO) * tx.gasprice;
         require(msg.sender == server, "System function"); // don't refund otherwise
         require(_refund <= balances[_user], "Not enough balance");
-        // To correct it:
-        // 1. disable transfer of RUSUBIGAS to other users
-        // 2. ensure the server makes no more than one transaction for a given user simultaneously.
         balances[_user] -= _refund; // must be called before transfer() against reentrancy attack
         server.transfer(_refund); // refund gas to the server
         _ubi.setAccount{gas: balances[_user]}(_user, _startTime, _esiaID);
