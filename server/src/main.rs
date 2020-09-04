@@ -7,7 +7,7 @@ extern crate rocket_contrib;
 mod models;
 mod schema;
 
-// use server::establish_connection;
+use server::establish_connection;
 use rocket_contrib::templates::Template;
 use std::collections::HashMap;
 
@@ -19,7 +19,7 @@ fn index() -> Template {
 }
 
 fn main() {
-    // let conn = establish_connection();
+    let conn = establish_connection();
 
     // use schema::persons;
     // diesel::insert_into(persons::table)
