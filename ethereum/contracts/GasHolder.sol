@@ -26,13 +26,13 @@ contract GasHolder {
         emit Transfer(address(0), msg.sender, msg.value);
     }
 
-    function setAccount(BaseUBI _ubi, address _user, uint256 _startTime, uint _esiaID) external {
-        uint256 _refund = (gasleft() + TODO) * tx.gasprice;
+    function setAccount(BaseUBI _ubi, address _user, uint256 _startTime, uint _esiaID, bool _setToZero) external {
+        uint256 _refund = (gasleft() + 0/*FIXME*/) * tx.gasprice;
         require(msg.sender == server, "System function"); // don't refund otherwise
         require(_refund <= balances[_user], "Not enough balance");
         balances[_user] -= _refund; // must be called before transfer() against reentrancy attack
         server.transfer(_refund); // refund gas to the server
-        _ubi.setAccount{gas: balances[_user]}(_user, _startTime, _esiaID);
+        _ubi.setAccount{gas: balances[_user]}(_user, _startTime, _esiaID, _setToZero);
         // We may be in a wrong state now, don't change any variables here.
     }
 
