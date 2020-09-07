@@ -39,6 +39,12 @@ contract BaseUBI {
         owner = address(0);
     }
 
+    function setGasHolder(address _gasHolder) external {
+        require(msg.sender == owner, "Requires owner");
+        require(_gasHolder != address(0), "Gas holder cannot be zero");
+        gasHolder = _gasHolder;
+    }
+
     function disableMinting() external {
         require(msg.sender == owner, "Only the admin");
         enabledMinting = false;
