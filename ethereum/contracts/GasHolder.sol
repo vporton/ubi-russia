@@ -27,7 +27,16 @@ contract GasHolder {
     }
 
     function setAccount(BaseUBI _ubi, address _user, uint256 _startTime, uint _esiaID, bool _setToZero) external {
-        uint256 _refund = (gasleft() + 0/*FIXME*/) * tx.gasprice;
+        // Compiles to this with Solidity 0.7.1 without optimization
+        // PUSH1 0x00 // 3
+        // GASPRICE // 2
+        // PUSH2 0xXXXX // 3
+        // GAS // 2
+        // ADD // 3
+        // MUL // 5
+        // SWAP1 // 3
+        // POP // 2
+        uint256 _refund = (gasleft() + 23) * tx.gasprice;
         require(msg.sender == server, "System function"); // don't refund otherwise
         require(_refund <= balances[_user], "Not enough balance");
         balances[_user] -= _refund; // must be called before transfer() against reentrancy attack
