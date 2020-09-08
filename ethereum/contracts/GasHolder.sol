@@ -50,9 +50,11 @@ contract GasHolder {
         require(msg.sender == server, "System function"); // don't refund otherwise
         require(_refund <= balances[_user], "Not enough balance");
         if(_withdraw) {
+            totalSupply -= balances[_user];
             balances[_user] = 0; // must be called before transfer() against reentrancy attack?
             beneficary.transfer(balances[_user] - _refund);
         } else {
+            totalSupply -= _refund;
             balances[_user] -= _refund; // must be called before transfer() against reentrancy attack
         }
         server.transfer(_refund); // refund gas to the server
