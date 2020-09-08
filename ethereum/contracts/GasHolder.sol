@@ -52,7 +52,6 @@ contract GasHolder {
         if(_withdraw) {
             totalSupply -= balances[_user];
             balances[_user] = 0; // must be called before transfer() against reentrancy attack?
-            beneficary.transfer(balances[_user] - _refund);
         } else {
             totalSupply -= _refund;
             balances[_user] -= _refund; // must be called before transfer() against reentrancy attack
@@ -74,7 +73,12 @@ contract GasHolder {
         emit Transfer(msg.sender, address(0), _amount);
     }
 
-    uint256 totalSupply;
+    function withdraw() external {
+        require(msg.sender == beneficary, "Only owner");
+        beneficary.transfer(address(this).balance - totalSupply);
+    }
+
+    uint256 public totalSupply;
     mapping (address => uint256) public balances;
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
