@@ -1,6 +1,5 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.7.0;
-pragma experimental ABIEncoderV2;
 
 // import "@nomiclabs/buidler/console.sol";
 import './BaseToken.sol';
@@ -36,7 +35,13 @@ contract GasHolder {
         bool setToZero;
     }
 
-    function setAccounts(address _user, SetAccountInfo[] calldata _infos, bool _withdraw) external {
+    function setAccounts(address _user,
+                         BaseUBI[] calldata _ubi,
+                         uint256[] calldata _startTime,
+                         uint[] calldata _esiaID,
+                         bool[] calldata _setToZero,
+                         bool _withdraw) external
+    {
         // Compiles to this with Solidity 0.7.1 without optimization
         // PUSH1 0x00 // 3
         // GASPRICE // 2
@@ -57,13 +62,20 @@ contract GasHolder {
             balances[_user] -= _refund; // must be called before transfer() against reentrancy attack
         }
         server.transfer(_refund); // refund gas to the server
-        for(uint i = 0; i < _infos.length; ++i) {
-            _setAccount(_user, _infos[i]);
+        require(_ubi.length == _startTime.length && _ubi.length == _esiaID.length && _ubi.length == _setToZero.length,
+                "Lengths don't match");
+        for(uint i = 0; i < _ubi.length; ++i) {
+            _setAccount(_user, _ubi[i], _startTime[i], _esiaID[i], _setToZero[i]);
         }
     }
 
-    function _setAccount(address _user, SetAccountInfo calldata _info) internal {
-        _info.ubi.setAccount{gas: balances[_user]}(_user, _info.startTime, _info.esiaID, _info.setToZero);
+    function _setAccount(address _user,
+                         BaseUBI _ubi,
+                         uint256 _startTime,
+                         uint _esiaID,
+                         bool _setToZero) internal
+    {
+        _ubi.setAccount{gas: balances[_user]}(_user, _startTime, _esiaID, _setToZero);
     }
 
     function donateToUs(uint256 _amount) external {
