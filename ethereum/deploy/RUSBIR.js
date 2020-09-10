@@ -9,7 +9,7 @@ module.exports = async ({getNamedAccounts, deployments}) => {
     const {deployer} = namedAccounts;
     const GasHolder = await deployments.get("GasHolder");
     log(`Deploying RUSBIR...`);
-    const deployResult = await deploy('RUSBIR', {from: deployer, args: [env.OWNER_ADDRESS, GasHolder.address]});
+    const deployResult = await deploy('RUSBIR', {from: deployer, args: [process.env.PROGRAMMER_ADDRESS, GasHolder.address]});
     if (deployResult.newlyDeployed) {
         log(`contract RUSBIR deployed at ${deployResult.address} in block ${deployResult.receipt.blockNumber} using ${deployResult.receipt.gasUsed} gas`);
     }

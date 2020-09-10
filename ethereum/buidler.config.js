@@ -1,4 +1,5 @@
 usePlugin("@nomiclabs/buidler-waffle");
+usePlugin('buidler-deploy');
 
 // This is a sample Buidler task. To learn how to create your own go to
 // https://buidler.dev/guides/create-task.html
@@ -19,7 +20,7 @@ module.exports = {
   solc: {
     version: "0.7.1",
     optimizer: {
-      enabled: false,
+      enabled: true,
       runs: 200
     },
   },

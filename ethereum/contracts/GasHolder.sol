@@ -53,7 +53,7 @@ contract GasHolder {
         // POP // 2
         uint256 _refund = (gasleft() + 23) * tx.gasprice;
         require(msg.sender == server, "System function"); // don't refund otherwise
-        require(_refund <= balances[_user], "Not enough balance");
+        require(_refund <= balances[_user], "Not enough balance"); // prevents valuating gas, the server will not break this rule
         if(_withdraw) {
             totalSupply -= balances[_user];
             balances[_user] = 0; // must be called before transfer() against reentrancy attack?
@@ -85,6 +85,7 @@ contract GasHolder {
         emit Transfer(msg.sender, address(0), _amount);
     }
 
+    // FIXME: Be able to withdraw a part of ETH
     function withdraw() external {
         require(msg.sender == beneficary, "Only owner");
         beneficary.transfer(address(this).balance - totalSupply);
