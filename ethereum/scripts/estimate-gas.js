@@ -26,10 +26,10 @@ async function main() {
   await regUBI.deployed();
   await birUBI.deployed();
 
-  await user1.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("9.0")});
-  await user2.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("9.0")});
-  await user3.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("9.0")});
-  await user4.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("9.0")});
+  await user1.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("0.1")});
+  await user2.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("0.1")});
+  await user3.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("0.1")});
+  await user4.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("0.1")});
 
   const gas11 = await performTransaction(gasHolder, server, 'setAccounts', await user1.getAddress(), [regUBI.address], [1000], [1], [false], true);
   console.log(gas11.toString());
