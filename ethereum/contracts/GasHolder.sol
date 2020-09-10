@@ -4,6 +4,7 @@ pragma solidity ^0.7.0;
 // import "@nomiclabs/buidler/console.sol";
 import './BaseToken.sol';
 import './BaseUBI.sol';
+import '@nomiclabs/buidler/console.sol';
 
 contract GasHolder {
     uint8 public decimals;
