@@ -14,7 +14,7 @@ async function performTransaction(contract, user, method, ...args) {
 }
 
 async function main() {
-  const [deployer, server, programmer, user1, user2] = await ethers.getSigners();
+  const [deployer, server, programmer, user1, user2, user3, user4] = await ethers.getSigners();
 
   const GasHolder = await ethers.getContractFactory("GasHolder");
   const gasHolder = await GasHolder.deploy(await server.getAddress(), await programmer.getAddress(), 18);
@@ -26,15 +26,22 @@ async function main() {
   await regUBI.deployed();
   await birUBI.deployed();
 
-  await user1.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("1.0")});
-  await user2.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("1.0")});
-  // console.log(ethers.utils.formatEther(await gasHolder.balances(await user1.getAddress())));
+  await user1.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("9.0")});
+  await user2.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("9.0")});
+  await user3.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("9.0")});
+  await user4.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("9.0")});
 
   const gas11 = await performTransaction(gasHolder, server, 'setAccounts', await user1.getAddress(), [regUBI.address], [1000], [1], [false], true);
   console.log(gas11.toString());
-  const gas21 = await performTransaction(gasHolder, server, 'setAccounts', await user2.getAddress(), [regUBI.address], [1000], [1], [false], true);
+  const gas12 = await performTransaction(gasHolder, server, 'setAccounts', await user2.getAddress(), [regUBI.address], [1000], [1], [false], true);
+  console.log(gas12.toString());
+  console.log(`max gas for single account: ${Math.max(gas11, gas12)}`);
+
+  const gas21 = await performTransaction(gasHolder, server, 'setAccounts', await user3.getAddress(), [regUBI.address, birUBI.address], [1000, 1001], [5, 6], [false, false], true);
   console.log(gas21.toString());
-  console.log(`max gas for single account: ${Math.max(gas11, gas21)}`);
+  const gas22 = await performTransaction(gasHolder, server, 'setAccounts', await user4.getAddress(), [regUBI.address, birUBI.address], [1000, 1001], [5, 6], [false, false], true);
+  console.log(gas22.toString());
+  console.log(`max gas for 2 accounts: ${Math.max(gas21, gas22)}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
