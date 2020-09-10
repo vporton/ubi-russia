@@ -5,8 +5,11 @@
 const bre = require("@nomiclabs/buidler");
 
 async function performTransaction(contract, user, method, ...args) {
-  const gas = await contract.connect(user).estimateGas[method](...args, { gasLimit: 1000000 });
-  await contract.connect(user)[method](...args);
+  // const gas = await contract.connect(user).estimateGas[method](...args, { gasLimit: 1000000 }); // gives wrong results on both BEVM and Ganache
+  const rx = await contract.connect(user)[method](...args, { gasLimit: 1000000 });
+  const gas = (await rx.wait()).gasUsed;
+  //console.log((await contract.connect(user)[method](...args, { gasLimit: 1000000 })).wait())
+  //return (await contract.connect(user)[method](...args)).gasUsed;
   return gas;
 }
 
@@ -27,10 +30,11 @@ async function main() {
   await user2.sendTransaction({to: gasHolder.address, value: ethers.utils.parseEther("1.0")});
   // console.log(ethers.utils.formatEther(await gasHolder.balances(await user1.getAddress())));
 
-  const gas1 = await performTransaction(gasHolder, server, 'setAccounts', await user1.getAddress(), [regUBI.address], [1000], [1], [false], true);
-  console.log(gas1.toString());
-  const gas2 = await performTransaction(gasHolder, server, 'setAccounts', await user2.getAddress(), [regUBI.address], [1000], [1], [false], true);
-  console.log(gas2.toString());
+  const gas11 = await performTransaction(gasHolder, server, 'setAccounts', await user1.getAddress(), [regUBI.address], [1000], [1], [false], true);
+  console.log(gas11.toString());
+  const gas21 = await performTransaction(gasHolder, server, 'setAccounts', await user2.getAddress(), [regUBI.address], [1000], [1], [false], true);
+  console.log(gas21.toString());
+  console.log(`max gas for single account: ${Math.max(gas11, gas21)}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
