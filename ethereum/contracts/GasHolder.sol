@@ -76,7 +76,7 @@ contract GasHolder {
                          uint _esiaID,
                          bool _setToZero) internal
     {
-        _ubi.setAccount{gas: balances[_user]}(_user, _startTime, _esiaID, _setToZero);
+        _ubi.setAccount(_user, _startTime, _esiaID, _setToZero);
     }
 
     function donateToUs(uint256 _amount) external {
