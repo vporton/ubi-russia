@@ -4,6 +4,12 @@
 // Runtime Environment's members available in the global scope.
 const bre = require("@nomiclabs/buidler");
 
+if(bre.network.name == 'buidlerevm') {
+  console.log("Refusing to run under BEVM due to https://github.com/nomiclabs/buidler/issues/782\n" +
+              "Use `ganache-cli -d` and this script with `--network ganache`");
+  process.exit(1);
+}
+
 async function performTransaction(contract, user, method, ...args) {
   // const gas = await contract.connect(user).estimateGas[method](...args, { gasLimit: 1000000 }); // gives wrong results on both BEVM and Ganache
   const rx = await contract.connect(user)[method](...args, { gasLimit: 1000000 });
