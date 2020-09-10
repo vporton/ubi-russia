@@ -6,7 +6,7 @@ const bre = require("@nomiclabs/buidler");
 
 async function performTransaction(contract, user, method, ...args) {
   const gas = await contract.connect(user).estimateGas[method](...args, { gasLimit: 1000000 });
-//  await contract.connect(user)[method](...args);
+  await contract.connect(user)[method](...args);
   return gas;
 }
 
@@ -28,7 +28,9 @@ async function main() {
   // console.log(ethers.utils.formatEther(await gasHolder.balances(await user1.getAddress())));
 
   const gas1 = await performTransaction(gasHolder, server, 'setAccounts', await user1.getAddress(), [regUBI.address], [1000], [1], [false], true);
-  console.log(ethers.utils.formatEther(gas1));
+  console.log(gas1.toString());
+  const gas2 = await performTransaction(gasHolder, server, 'setAccounts', await user2.getAddress(), [regUBI.address], [1000], [1], [false], true);
+  console.log(gas2.toString());
 }
 
 // We recommend this pattern to be able to use async/await everywhere
