@@ -14,7 +14,7 @@ async function performTransaction(contract, user, method, ...args) {
 }
 
 async function main() {
-  const [deployer, server, programmer, user1, user2, user3, user4] = await ethers.getSigners();
+  const [server, programmer, user1, user2, user3, user4] = await ethers.getSigners();
 
   const GasHolder = await ethers.getContractFactory("GasHolder");
   const gasHolder = await GasHolder.deploy(await server.getAddress(), await programmer.getAddress(), 18);
